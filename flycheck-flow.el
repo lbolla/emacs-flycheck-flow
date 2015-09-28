@@ -53,7 +53,9 @@ See URL `http://flowtype.org/'."
 	    ":"
 	    line
 	    ":"
-	    (minimal-match (one-or-more not-newline))
+	    column
+	    ","
+	    (one-or-more digit)
 	    ": "
 	    (message)
 	    line-end))
