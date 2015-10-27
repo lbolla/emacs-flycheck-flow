@@ -46,18 +46,16 @@
     "A JavaScript syntax and style checker using Flow.
 
 See URL `http://flowtype.org/'."
-    :command ("flow" "--one-line" source-original)
+    :command ("flow" source-original)
     :error-patterns
     ((error line-start
 	    (file-name)
 	    ":"
 	    line
 	    ":"
-	    column
-	    ","
-	    (one-or-more digit)
+	    (minimal-match (one-or-more not-newline))
 	    ": "
-	    (message)
+	    (message (minimal-match (and (one-or-more anything) "\n")))
 	    line-end))
     :modes (js-mode js2-mode js3-mode))
 
