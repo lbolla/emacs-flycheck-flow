@@ -9,8 +9,10 @@
 
 ;;; Commentary:
 
-;; This package adds support for flow to flycheck. To use it, add
-;; to your init.el:
+;; This package adds support for flow to flycheck. It requires
+;; flow>=0.20.0.
+
+;; To use it, add to your init.el:
 
 ;; (require 'flycheck-flow)
 ;; (add-hook 'javascript-mode-hook 'flycheck-mode)
@@ -46,7 +48,7 @@
     "A JavaScript syntax and style checker using Flow.
 
 See URL `http://flowtype.org/'."
-    :command ("flow" source-original)
+    :command ("flow" "check" "--old-output-format" source-original)
     :error-patterns
     ((error line-start
 	    (file-name)
