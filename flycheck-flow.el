@@ -67,7 +67,7 @@ See URL `http://flowtype.org/'."
 	    ": "
 	    (message (minimal-match (and (one-or-more anything) "\n")))
 	    line-end))
-    :modes (js-mode js2-mode js3-mode))
+    :modes (js-mode js2-mode js3-mode web-mode))
 
 (add-to-list 'flycheck-checkers 'javascript-flow t)
 
