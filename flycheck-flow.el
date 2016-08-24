@@ -45,7 +45,7 @@
 (require 'flycheck)
 
 (flycheck-def-args-var flycheck-javascript-flow-args javascript-flow)
-(customize-set-variable 'flycheck-javascript-flow-args '("status"))
+(customize-set-variable 'flycheck-javascript-flow-args '())
 
 (flycheck-define-checker javascript-flow
     "A JavaScript syntax and style checker using Flow.
@@ -53,10 +53,12 @@
 See URL `http://flowtype.org/'."
     :command (
               "flow"
+              "check-content"
               (eval flycheck-javascript-flow-args)
               "--old-output-format"
               "--color=never"
               source-original)
+    :standard-input t
     :error-patterns
     ((error line-start
 	    (file-name)
