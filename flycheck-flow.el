@@ -59,6 +59,12 @@ See URL `http://flowtype.org/'."
               "--color=never"
               source-original)
     :standard-input t
+    :predicate
+    (lambda ()
+      (and
+       buffer-file-name
+       (file-exists-p buffer-file-name)
+       (locate-dominating-file buffer-file-name ".flowconfig")))
     :error-patterns
     ((error line-start
 	    (file-name)
