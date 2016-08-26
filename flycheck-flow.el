@@ -53,7 +53,7 @@
 See URL `http://flowtype.org/'."
     :command (
               "flow"
-              "check-content"
+              "check-contents"
               (eval flycheck-javascript-flow-args)
               "--old-output-format"
               "--color=never"
