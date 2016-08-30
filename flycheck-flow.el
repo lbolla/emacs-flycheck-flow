@@ -77,7 +77,7 @@ See URL `http://flowtype.org/'."
 	    line-end))
     :modes (js-mode js2-mode js3-mode web-mode))
 
-(add-to-list 'flycheck-checkers 'javascript-flow t)
+(add-to-list 'flycheck-checkers 'javascript-flow)
 
 (provide 'flycheck-flow)
 ;;; flycheck-flow.el ends here
