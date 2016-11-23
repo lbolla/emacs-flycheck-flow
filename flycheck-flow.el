@@ -55,7 +55,7 @@ See URL `http://flowtype.org/'."
               "flow"
               "check-contents"
               (eval flycheck-javascript-flow-args)
-              "--old-output-format"
+              "--from" "emacs"
               "--color=never"
               source-original)
     :standard-input t
@@ -67,14 +67,12 @@ See URL `http://flowtype.org/'."
        (locate-dominating-file buffer-file-name ".flowconfig")))
     :error-patterns
     ((error line-start
-	    (file-name)
-	    ":"
-	    line
-	    ":"
-	    (minimal-match (one-or-more not-newline))
-	    ": "
-	    (message (minimal-match (and (one-or-more anything) "\n")))
-	    line-end))
+            (file-name)
+            ":"
+            line
+            "\n"
+            (message (minimal-match (and (one-or-more anything) "\n")))
+            line-end))
     :modes (js-mode js2-mode js3-mode))
 
 (add-to-list 'flycheck-checkers 'javascript-flow)
