@@ -88,6 +88,7 @@ See URL `http://flowtype.org/'."
   :command (
             "flow"
             "coverage"
+            (eval flycheck-javascript-flow-args)
             "--quiet"
             "--json"
             "--from" "emacs"
