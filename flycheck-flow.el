@@ -65,6 +65,7 @@ See URL `http://flowtype.org/'."
               "flow"
               "check-contents"
               (eval flycheck-javascript-flow-args)
+              "--quiet"
               "--from" "emacs"
               "--color=never"
               source-original)
@@ -87,6 +88,7 @@ See URL `http://flowtype.org/'."
   :command (
             "flow"
             "coverage"
+            "--quiet"
             "--json"
             "--from" "emacs"
             "--path" source-original)
