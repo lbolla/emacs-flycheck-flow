@@ -65,6 +65,7 @@ See URL `http://flowtype.org/'."
               "flow"
               "check-contents"
               (eval flycheck-javascript-flow-args)
+              "--quiet"
               "--from" "emacs"
               "--color=never"
               source-original)
@@ -87,6 +88,8 @@ See URL `http://flowtype.org/'."
   :command (
             "flow"
             "coverage"
+            (eval flycheck-javascript-flow-args)
+            "--quiet"
             "--json"
             "--from" "emacs"
             "--path" source-original)
@@ -96,17 +99,22 @@ See URL `http://flowtype.org/'."
   (lambda (output checker buffer)
     (let* ((json-array-type 'list)
            (json-object-type 'alist)
-           (report (json-read-from-string output))
-           (locs (alist-get 'uncovered_locs (alist-get 'expressions report))))
+           (locs (condition-case nil
+                     (let ((report (json-read-from-string output)))
+                       (alist-get 'uncovered_locs (alist-get 'expressions report)))
+                   (error nil))))
       (mapcar (lambda (loc)
-                (let ((start (alist-get 'start loc)))
+                (let ((start (alist-get 'start loc))
+                      (end (alist-get 'end loc)))
                   (flycheck-error-new
                    :buffer buffer
                    :checker 'javascript-flow-coverage
                    :filename buffer-file-name
                    :line (alist-get 'line start)
                    :column (alist-get 'column start)
-                   :message "No coverage (flow)"
+                   :message (format "no-coverage-to (%s . %s)"
+                                    (alist-get 'line end)
+                                    (alist-get 'column end))
                    :level 'warning)))
               locs)))
   :modes (js-mode js2-mode js3-mode))
