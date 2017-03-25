@@ -79,7 +79,8 @@ See URL `http://flowtype.org/'."
             "\n"
             (message (minimal-match (and (one-or-more anything) "\n")))
             line-end))
-    :modes (js-mode js2-mode js3-mode))
+    ;; js3-mode doesn't support jsx
+    :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode))
 
 (flycheck-define-checker javascript-flow-coverage
   "A coverage checker for Flow.
@@ -117,7 +118,8 @@ See URL `http://flowtype.org/'."
                                     (alist-get 'column end))
                    :level 'warning)))
               locs)))
-  :modes (js-mode js2-mode js3-mode))
+  ;; js3-mode doesn't support jsx
+  :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode))
 
 (add-to-list 'flycheck-checkers 'javascript-flow)
 (add-to-list 'flycheck-checkers 'javascript-flow-coverage t)
