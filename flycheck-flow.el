@@ -111,7 +111,6 @@ See URL `http://flowtype.org/'."
               "flow"
               "check-contents"
               (eval flycheck-javascript-flow-args)
-              "--quiet"
               "--json"
               "--from" "emacs"
               "--color=never"
