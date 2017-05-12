@@ -51,6 +51,52 @@
 (flycheck-def-args-var flycheck-javascript-flow-args javascript-flow)
 (customize-set-variable 'flycheck-javascript-flow-args '())
 
+(defun flycheck-flow--parse-json (output checker buffer)
+  (let* ((json-object-type 'alist)
+         (json-array-type 'list)
+         (flow-json-output (json-read-from-string output))
+         (flow-errors-list (cdr (assq 'errors flow-json-output)))
+         message-level
+         message-code
+         message-code-reason
+         message-filename
+         message-line
+         message-column
+         message-descr
+         errors)
+    (dolist (error-message flow-errors-list)
+      ;; The structure for each `error-message' in `flow-errors-list' is like this:
+      ;; ((level . `message-level')
+      ;;  (message ((context . `message-code')
+      ;;            (descr . `message-code-reason')
+      ;;            (loc (source . `message-filename')
+      ;;                 (start (line . `message-line') (column . `message-column'))))
+      ;;           ((descr . `message-descr'))))
+      (let-alist error-message
+        (setq message-level (intern .level))
+
+        (let-alist (car .message)
+          (setq message-code .context
+                message-code-reason .descr
+                message-filename .loc.source
+                message-line .loc.start.line
+                message-column .loc.start.column))
+
+        (let-alist (car (cdr .message))
+          (setq message-descr .descr)))
+
+      (push (flycheck-error-new-at
+             message-line
+             message-column
+             message-level
+             message-descr
+             :id message-code-reason
+             :checker checker
+             :buffer buffer
+             :filename message-filename)
+            errors))
+    (nreverse errors)))
+
 (defun flycheck-flow--predicate ()
   (and
    buffer-file-name
@@ -66,19 +112,13 @@ See URL `http://flowtype.org/'."
               "check-contents"
               (eval flycheck-javascript-flow-args)
               "--quiet"
+              "--json"
               "--from" "emacs"
               "--color=never"
               source-original)
     :standard-input t
     :predicate flycheck-flow--predicate
-    :error-patterns
-    ((error line-start
-            (file-name)
-            ":"
-            line
-            "\n"
-            (message (minimal-match (and (one-or-more anything) "\n")))
-            line-end))
+    :error-parser flycheck-flow--parse-json
     ;; js3-mode doesn't support jsx
     :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode))
 
