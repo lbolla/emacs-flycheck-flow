@@ -57,8 +57,8 @@
          (json-array-type 'list)
          (flow-json-output (json-read-from-string output))
          (flow-errors-list (cdr (assq 'errors flow-json-output)))
+         message-kind
          message-level
-         message-code
          message-code-reason
          message-filename
          message-line
@@ -67,24 +67,27 @@
          errors)
     (dolist (error-message flow-errors-list)
       ;; The structure for each `error-message' in `flow-errors-list' is like this:
-      ;; ((level . `message-level')
-      ;;  (message ((context . `message-code')
-      ;;            (descr . `message-code-reason')
+      ;; ((kind . `message-kind')
+      ;;  (level . `message-level')
+      ;;  (message ((descr . `message-code-reason')
       ;;            (loc (source . `message-filename')
       ;;                 (start (line . `message-line') (column . `message-column'))))
       ;;           ((descr . `message-descr'))))
       (let-alist error-message
+        (setq message-kind .kind)
         (setq message-level (intern .level))
 
         (let-alist (car .message)
-          (setq message-code .context
-                message-code-reason .descr
+          (setq message-code-reason .descr
                 message-filename .loc.source
                 message-line .loc.start.line
                 message-column .loc.start.column))
 
         (let-alist (car (cdr .message))
           (setq message-descr .descr)))
+
+      (when (string= message-kind "parse")
+        (setq message-descr message-kind))
 
       (push (flycheck-error-new-at
              message-line
