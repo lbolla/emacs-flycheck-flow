@@ -81,10 +81,12 @@
           (setq message-code-reason .descr
                 message-filename .loc.source
                 message-line .loc.start.line
+                message-descr .descr
                 message-column .loc.start.column))
 
         (let-alist (car (cdr .message))
-          (setq message-descr .descr)))
+          (when (string= .type "Comment")
+            (setq message-descr .descr))))
 
       (when (string= message-kind "parse")
         (setq message-descr message-kind))
@@ -134,7 +136,6 @@ See URL `http://flowtype.org/'."
             "flow"
             "coverage"
             (eval flycheck-javascript-flow-args)
-            "--quiet"
             "--json"
             "--from" "emacs"
             "--path" source-original)
