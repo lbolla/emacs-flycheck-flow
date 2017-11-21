@@ -126,7 +126,7 @@ See URL `http://flowtype.org/'."
     :predicate flycheck-flow--predicate
     :error-parser flycheck-flow--parse-json
     ;; js3-mode doesn't support jsx
-    :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode))
+    :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode web-mode))
 
 (flycheck-define-checker javascript-flow-coverage
   "A coverage checker for Flow.
