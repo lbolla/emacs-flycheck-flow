@@ -5,6 +5,7 @@
 ;; Author: Lorenzo Bolla <lbolla@gmail.com>
 ;; Created: 16 Septermber 2015
 ;; Version: 1.1
+;; Package-Version: 20180216.1156
 ;; Package-Requires: ((flycheck "0.18") (json "1.4"))
 
 ;;; Commentary:
@@ -103,12 +104,36 @@
             errors))
     (nreverse errors)))
 
+(defun flycheck-flow-tag-present-p ()
+  "Return true if the '// @flow' tag is present in the current buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (let (stop found)
+      (while (not stop)
+        (when (not (re-search-forward "[^\n[:space:]]" nil t))
+          (setq stop t))
+        (if (equal (point) (point-min))
+            (setq stop t)
+          (backward-char))
+        (cond ((or (looking-at "//+[ ]*@flow")
+                   (looking-at "/\\**[ ]*@flow"))
+               (setq found t)
+               (setq stop t))
+              ((looking-at "//")
+               (forward-line))
+              ((looking-at "/\\*")
+               (when (not (re-search-forward "*/" nil t))
+                 (setq stop t)))
+              (t (setq stop t))))
+found)))
+
 (defun flycheck-flow--predicate ()
   "Shall we run the checker?"
   (and
    buffer-file-name
    (file-exists-p buffer-file-name)
-   (locate-dominating-file buffer-file-name ".flowconfig")))
+   (locate-dominating-file buffer-file-name ".flowconfig")
+   (flycheck-flow-tag-present-p)))
 
 (flycheck-define-checker javascript-flow
     "A JavaScript syntax and style checker using Flow.
@@ -168,6 +193,9 @@ See URL `http://flowtype.org/'."
 
 (add-to-list 'flycheck-checkers 'javascript-flow)
 (add-to-list 'flycheck-checkers 'javascript-flow-coverage t)
+
+;; allows eslint checks such as unused variables in addition to javascript-flow checker
+(flycheck-add-next-checker 'javascript-flow '(t . javascript-eslint) 'append)
 
 (provide 'flycheck-flow)
 ;;; flycheck-flow.el ends here
