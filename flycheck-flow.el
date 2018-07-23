@@ -103,28 +103,18 @@
             errors))
     (nreverse errors)))
 
-(defun flycheck-flow-tag-present-p ()
-  "Return true if the '// @flow' tag is present in the current buffer."
+(defun read-first-line ()
+  "Return first line of current buffer."
   (save-excursion
     (goto-char (point-min))
-    (let (stop found)
-      (while (not stop)
-        (when (not (re-search-forward "[^\n[:space:]]" nil t))
-          (setq stop t))
-        (if (equal (point) (point-min))
-            (setq stop t)
-          (backward-char))
-        (cond ((or (looking-at "//+[ ]*@flow")
-                   (looking-at "/\\**[ ]*@flow"))
-               (setq found t)
-               (setq stop t))
-              ((looking-at "//")
-               (forward-line))
-              ((looking-at "/\\*")
-               (when (not (re-search-forward "*/" nil t))
-                 (setq stop t)))
-              (t (setq stop t))))
-found)))
+    (let ((b (point))
+          (e (progn (end-of-line) (point))))
+      (buffer-substring-no-properties b e))))
+
+(defun flycheck-flow-tag-present-p ()
+  "Return true if the '// @flow' or '/* @flow */' tag is present in
+   the first line of current buffer."
+  (string-match-p "^\\(// @flow\\|/\\* @flow \\*/\\)" (read-first-line)))
 
 (defun flycheck-flow--predicate ()
   "Shall we run the checker?"
