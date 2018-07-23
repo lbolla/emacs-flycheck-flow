@@ -103,12 +103,26 @@
             errors))
     (nreverse errors)))
 
+(defun read-first-line ()
+  "Return first line of current buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((b (point))
+          (e (progn (end-of-line) (point))))
+      (buffer-substring-no-properties b e))))
+
+(defun flycheck-flow-tag-present-p ()
+  "Return true if the '// @flow' or '/* @flow */' tag is present in
+   the first line of current buffer."
+  (string-match-p "^\\(// @flow\\|/\\* @flow \\*/\\)" (read-first-line)))
+
 (defun flycheck-flow--predicate ()
   "Shall we run the checker?"
   (and
    buffer-file-name
    (file-exists-p buffer-file-name)
-   (locate-dominating-file buffer-file-name ".flowconfig")))
+   (locate-dominating-file buffer-file-name ".flowconfig")
+   (flycheck-flow-tag-present-p)))
 
 (flycheck-define-checker javascript-flow
     "A JavaScript syntax and style checker using Flow.
@@ -168,6 +182,9 @@ See URL `http://flowtype.org/'."
 
 (add-to-list 'flycheck-checkers 'javascript-flow)
 (add-to-list 'flycheck-checkers 'javascript-flow-coverage t)
+
+;; allows eslint checks such as unused variables in addition to javascript-flow checker
+(flycheck-add-next-checker 'javascript-flow '(t . javascript-eslint) 'append)
 
 (provide 'flycheck-flow)
 ;;; flycheck-flow.el ends here
