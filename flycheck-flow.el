@@ -114,7 +114,7 @@
 (defun flycheck-flow-tag-present-p ()
   "Return true if the '// @flow' or '/* @flow */' tag is present in
    the first line of current buffer."
-  (string-match-p "^\\(//+ *@flow\\|/\\* @flow \\*/\\)" (read-first-line)))
+  (string-match-p "^\\(//+ *@flow\\|/\\* @flow\\)" (read-first-line)))
 
 (defun flycheck-flow--predicate ()
   "Shall we run the checker?"
